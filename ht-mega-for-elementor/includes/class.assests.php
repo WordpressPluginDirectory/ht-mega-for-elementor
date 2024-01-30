@@ -322,7 +322,11 @@ if ( !class_exists( 'HTMega_Elementor_Addons_Assests' ) ) {
                     'version' => HTMEGA_VERSION,
                     'deps'    => [ 'jquery' ]
                 ],
-
+                'anime' => [
+                    'src'     => HTMEGA_ADDONS_PL_URL . 'extensions/floating-effects/assets/js/anime.min.js',
+                    'version' => HTMEGA_VERSION,
+                    'deps'    => [ 'jquery' ]
+                ],
             ];
 
             if( !empty( $google_map_api_key ) ){
@@ -734,6 +738,18 @@ if ( !class_exists( 'HTMega_Elementor_Addons_Assests' ) ) {
 				'title'      => __( 'Copy Coupon Code', 'htmega-addons' ),
 				'icon'       => 'htmega-icon eicon-copy',
 				'action_url' => esc_url('https://wphtmega.com/widget/elementor-copy-coupon-code-widget/'),
+			),
+            array(
+				'key'       => 'htmega-video-gallery-addons',
+				'title'      => __( 'Video Gallery', 'htmega-addons' ),
+				'icon'       => 'htmega-icon eicon-media-carousel',
+				'action_url' => esc_url('https://wphtmega.com/widget/elementor-video-gallery-widget/'),
+			),
+            array(
+				'key'       => 'htmega-video-playlist-addons',
+				'title'      => __( 'Video Playlist', 'htmega-addons' ),
+				'icon'       => 'htmega-icon eicon-video-playlist',
+				'action_url' => esc_url('https://wphtmega.com/widget/elementor-video-playlist-widget/'),
 			),
 
         );
