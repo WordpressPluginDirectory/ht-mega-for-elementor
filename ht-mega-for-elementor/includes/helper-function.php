@@ -67,6 +67,7 @@ if( !function_exists('htmega_get_option') ){
 if( !function_exists('htmega_elementor_template') ){
     function htmega_elementor_template( $args = [] ) {
         if( class_exists('\Elementor\Plugin') ){
+
             $template_instance = \Elementor\Plugin::instance()->templates_manager->get_source( 'local' );
             
             $defaults = [
@@ -95,8 +96,8 @@ if( !function_exists('htmega_elementor_template') ){
             }else{
                 $templates = [ '0' => __( 'Do not Saved Templates.', 'htmega-addons' ) ];
             }
-
-            wp_reset_query();
+            
+            wp_reset_postdata();
 
             return $templates;
 
