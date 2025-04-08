@@ -675,7 +675,56 @@ class HTMega_Elementor_Widget_TeamMember extends Widget_Base {
             );
             
         $this->end_controls_section();
+        // Team Member Image style tab start
+        $this->start_controls_section(
+            'htmega_team_member_image_style',
+            [
+                'label'     => __( 'Image', 'htmega-addons' ),
+                'tab'       => Controls_Manager::TAB_STYLE,
+            ]
+        );
+            $this->add_group_control(
+                Group_Control_Border::get_type(),
+                [
+                    'name' => 'team_image_border',
+                    'label' => esc_html__( 'Border', 'htmega-addons' ),
+                    'selector' => '{{WRAPPER}} .htmega-thumb img',
+                ]
+            );
 
+            $this->add_responsive_control(
+                'team_image_radius',
+                [
+                    'label' => esc_html__( 'Border Radius', 'htmega-addons' ),
+                    'type' => Controls_Manager::DIMENSIONS,
+                    'size_units' => [ 'px', '%', 'em' ],
+                    'selectors' => [
+                        '{{WRAPPER}} .htmega-thumb img' => 'border-radius:  {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; overflow:hidden;',
+                    ],
+                ]
+            );
+            $this->add_group_control(
+                Group_Control_Box_Shadow::get_type(),
+                [
+                    'name' => 'team_image_boxshadow',
+                    'label' => __( 'Box Shadow', 'htmega-addons' ),
+                    'selector' => '{{WRAPPER}} .htmega-thumb img',
+                ]
+            );
+            $this->add_responsive_control(
+                'team_image_padding',
+                [
+                    'label' => __( 'Padding', 'htmega-addons' ),
+                    'type' => Controls_Manager::DIMENSIONS,
+                    'size_units' => [ 'px', '%', 'em' ],
+                    'selectors' => [
+                        '{{WRAPPER}} .htmega-thumb' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    ],
+                    'separator' =>'before',
+                ]
+            );
+
+        $this->end_controls_section(); // Team image style tab end
         // Team Member Name style tab start
         $this->start_controls_section(
             'htmega_team_member_name_style',
@@ -954,7 +1003,6 @@ class HTMega_Elementor_Widget_TeamMember extends Widget_Base {
                 'tab'       => Controls_Manager::TAB_STYLE,
             ]
         );
-
             $this->add_responsive_control(
                 'team_socialmedia_margin',
                 [
@@ -1087,7 +1135,28 @@ class HTMega_Elementor_Widget_TeamMember extends Widget_Base {
                     ],
                 ]
             );
-            
+            $this->add_control(
+                'social_border_top_heading',
+                [
+                    'label' => __( 'Social container Border', 'htmega-addons' ),
+                    'type' => Controls_Manager::HEADING,
+                    'separator' => 'before',
+                    'condition' => [
+                        'htmega_team_style' =>['6'],
+                    ],
+                ]
+            );
+            $this->add_group_control(
+                Group_Control_Border::get_type(),
+                [
+                    'name' => 'team_social_box_border',
+                    'label' => esc_html__( 'Social container Border', 'htmega-addons' ),
+                    'selector' => '{{WRAPPER}} .htmega-team-style-6 .htmega-team-info .htmega-social-network',
+                    'condition' => [
+                        'htmega_team_style' =>['6'],
+                    ],
+                ]
+            );
         $this->end_controls_section(); // Team Member Designation style tab end
 
     }
