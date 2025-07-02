@@ -17853,7 +17853,14 @@ justify-content: center;
       font-size: 24px;
       padding: 0;
   }
-  
+  .panel-slider-wrapper.htmega-carousel-activation button svg{
+    width: 20px;
+    height: 20px;
+  }
+  .panel-slider-wrapper.htmega-carousel-activation button:hover svg{
+    fill: #000;
+  }
+
   .panel-slider-wrapper.htmega-carousel-activation button:hover {
       background: rgba(24, 1, 44, 0.5);
   }
@@ -19287,4 +19294,24 @@ justify-content: center;
 		transform: scale(1);
 		opacity: 1;	
 	}
+}
+
+  /* small mobile :320px. */
+  @media (max-width: 767px) {
+    .htmega-testimonial-style-12 .testimonal {
+        align-items: start;
+        flex-direction: column;
+        gap: 30px;
+    }
+    .htmega-testimonial-style-12 .testimonal .content{
+        padding-left: 0;
+    }
+    .htmega-testimonial-style-3 .testimonal img{
+        float: none;
+    }
+    .htmega-testimonial-style-3 .testimonal .content{
+        padding-left: 0;
+        padding-top: 15px;
+    }
+
 }
