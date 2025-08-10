@@ -3,7 +3,7 @@ Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasi
 Tags: elementor, elementor addons, elementor widgets, elementor templates, addons, elementor slider, elementor page builder, mega menu, addons for elementor, post grid, elements, header footer builder
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.9.0
+Stable tag: 2.9.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +25,7 @@ If you want to view the demo templates available in this plugin, you can check t
 
 == ✅ AI Writer ==
 
-The AI Writer feature revolutionizes content creation within Elementor by integrating powerful AI engines directly into your widgets. Generate professional headlines, compelling copy, and engaging text instantly with support for OpenAI (GPT-4, GPT-3.5), Claude (Anthropic), and Google AI (Gemini). Simply click the AI button next to any text field, describe what you need, and get multiple high-quality content suggestions in seconds. This intelligent assistant provides relevant, conversion-focused content that saves hours of writing time while maintaining professional quality across all your web projects.
+The AI Writer feature revolutionizes content creation within Elementor by integrating powerful AI engines directly into your widgets. [More details](https://wphtmega.com/docs/modules/generate-elementor-content-with-ht-mega-ai-writer/).
 
 == ✅ Header/Footer Builder ==
 
@@ -300,15 +300,19 @@ This simple twitter widget for WordPress is simple and easy to use, and it allow
 * Every element enable / disable option panel.
 * 877 Google Font Supported.
 * Cross Browser Compatible.
-* 15 Categories / Template Sets
-* 15 Page Templates
+* 43 Categories / Template Sets
+* 245 Page Templates
+* AI Writer
+* Header Builder
+* Footer Builder
+* Theme Builder
  
 == Exclusive HT Mega Pro Features: ==
 
 In HT Mega pro version, there are tons of extra widgets which will be of great help when designing your website.
 
 * 43 Categories / Template Sets
-* 800+ Block Templates
+* 995+ Block Templates
 * 30+ Pro Widgets
 * Cross Domain Copy Paste
 * Live Copy Paste
@@ -527,6 +531,37 @@ Visit [HasThemes](https://hasthemes.com/) for more details about HTML, Shopify a
 
 
 == Changelog ==
+
+= Version 2.9.3 - Date: 2025-08-10 =
+* Added: [Evenro - Event Management Template Kit](https://library.wphtmega.com/evenro-event-management-template/).
+* Added: [Eldero - Wellness Website Template Kit](https://library.wphtmega.com/eldero-senior-care-template/).
+* Added: [Rosoi - Food & Drink Website Template Kit](https://library.wphtmega.com/rosoi-restaurant-template/).
+* Fixed: Image spacing issue in Testimonial Carousel widget.
+* Fixed: Arrow icon default Size issue in Post Carousel widget.
+* Fixed: A few minor issues.
+* Tested: Compatibility with the latest version of Elementor.
+
+= Version 2.9.2 - Date: 2025-07-30 =
+* Added: [Yogabes - Yoga Template Kit](https://library.wphtmega.com/yogabes-yoga-template/).
+* Added: [Xova - Business Agency Template Kit](https://library.wphtmega.com/xova-business-agency-template/).
+* Added: [Travlo - Traveling Template Kit](https://library.wphtmega.com/travlo-traveling-template/).
+* Added: [Zyift - Fitness Template Kit](https://library.wphtmega.com/zyift-fitness-template/).
+* Added: [TechZen - Technology Template Kit](https://library.wphtmega.com/techzen-technology-template/) (Pro).
+* Added: Dynamic tag support in Services widget.
+* Added: Image Border, Border Radius, Shadow and Image width options in Working Process widget.
+* Fixed: Page Redirect issue after template creation in Theme Builder.
+* Fixed: A few minor issues.
+* Tested: Compatibility with the latest version of Elementor.
+
+= Version 2.9.1 - Date: 2025-07-16 =
+* Added: [Vrzion - Technology Template Kit](https://library.wphtmega.com/vrzion-technology-template/).
+* Added: [Arfito - IT Consulting Template Kit](https://library.wphtmega.com/arfito-it-consulting-template/).
+* Added: [Markio - Marketing Agency Template Kit](https://library.wphtmega.com/markio-marketing-agency-template/).
+* Added: Mega Menu width and position value placeholder in Mega Menu Settings.
+* Fixed: Carousel Responsive Breakpoint issue in Carousel widget.
+* Fixed: A few minor issues.
+* Tested: Compatibility with the latest version of Elementor.
+
 = Version 2.9.0 - Date: 2025-07-02 =
 * Added: AI Writer for Widgets content generation( OpenAI, Claude, Google AI )
 * Added: [Prolio - Portfolio Template Kit](https://library.wphtmega.com/prolio-portfolio-template/).
@@ -1027,5 +1062,5 @@ The pro version of HT Mega gives you access to numerous incredible features that
 7. WooCommerce Widgets
 8. Theme Builder Widgets
 9. Modules Settings
-10. Widgets Enable / Disable Option Panel
-11. Page Template Library Import Options
+10. AI Writer for Widgets content generation ( OpenAI, Claude, Google AI )
+11. Ready Template library
