@@ -5,6 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 class HTMega_Template_Library{
 
     const TRANSIENT_KEY = 'htmega_template_info';
+    const CACHE_DIR = 'htmega-addons';
+    const CACHE_FILE = 'htmega_template_info.json';
+    const CACHE_META_FILE = 'htmega_template_meta.json';
+    const CACHE_EXPIRY = 604800; // WEEK_IN_SECONDS
     public static $buylink = null;
 
     public static $endpoint     = 'https://library.wphtmega.com/wp-json/htmega/v1/templates';
@@ -210,6 +214,230 @@ class HTMega_Template_Library{
         return self::$buylink;
     }
 
+    /**
+     * Initialize WP_Filesystem
+     */
+    private static function init_filesystem() {
+        global $wp_filesystem;
+
+        if ( ! $wp_filesystem || ! is_object( $wp_filesystem ) ) {
+            if ( ! function_exists( 'WP_Filesystem' ) ) {
+                require_once ABSPATH . 'wp-admin/includes/file.php';
+            }
+
+            $upload_dir = wp_upload_dir();
+            WP_Filesystem( false, $upload_dir['basedir'], true );
+        }
+
+        return ( $wp_filesystem && is_object( $wp_filesystem ) );
+    }
+
+    /**
+     * Get cache directory path
+     */
+    public static function get_cache_dir() {
+        $upload_dir = wp_upload_dir();
+        return trailingslashit( $upload_dir['basedir'] ) . self::CACHE_DIR . '/cache';
+    }
+
+    /**
+     * Get cache file path
+     */
+    public static function get_cache_file_path() {
+        return trailingslashit( self::get_cache_dir() ) . self::CACHE_FILE;
+    }
+
+    /**
+     * Get cache meta file path
+     */
+    public static function get_cache_meta_path() {
+        return trailingslashit( self::get_cache_dir() ) . self::CACHE_META_FILE;
+    }
+
+    /**
+     * Create cache directory if not exists
+     */
+    public static function create_cache_dir() {
+        global $wp_filesystem;
+
+        if ( ! self::init_filesystem() ) {
+            return false;
+        }
+
+        $upload_dir = wp_upload_dir();
+        $plugin_dir = trailingslashit( $upload_dir['basedir'] ) . self::CACHE_DIR;
+        $cache_dir  = self::get_cache_dir();
+
+        // Create parent plugin directory if not exists
+        if ( ! $wp_filesystem->exists( $plugin_dir ) ) {
+            wp_mkdir_p( $plugin_dir );
+            $wp_filesystem->put_contents( trailingslashit( $plugin_dir ) . 'index.php', '<?php // Silence is golden', FS_CHMOD_FILE );
+        }
+
+        // Create cache directory if not exists
+        if ( ! $wp_filesystem->exists( $cache_dir ) ) {
+            $created = wp_mkdir_p( $cache_dir );
+
+            if ( $created ) {
+                // Create .htaccess for security
+                $htaccess_content = "Options -Indexes\n<Files *.json>\n    Order Allow,Deny\n    Allow from all\n</Files>";
+                $wp_filesystem->put_contents( trailingslashit( $cache_dir ) . '.htaccess', $htaccess_content, FS_CHMOD_FILE );
+
+                // Create index.php for security
+                $wp_filesystem->put_contents( trailingslashit( $cache_dir ) . 'index.php', '<?php // Silence is golden', FS_CHMOD_FILE );
+            }
+        }
+
+        return $wp_filesystem->is_dir( $cache_dir ) && $wp_filesystem->is_writable( $cache_dir );
+    }
+
+    /**
+     * Save data to cache file
+     */
+    public static function save_cache_file( $data ) {
+        global $wp_filesystem;
+
+        if ( ! self::create_cache_dir() ) {
+            return false;
+        }
+
+        $file_path = self::get_cache_file_path();
+        $json_data = wp_json_encode( $data );
+
+        $saved = $wp_filesystem->put_contents( $file_path, $json_data, FS_CHMOD_FILE );
+
+        if ( $saved ) {
+            self::update_cache_meta( strlen( $json_data ) );
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update cache meta information
+     */
+    public static function update_cache_meta( $size = 0 ) {
+        global $wp_filesystem;
+
+        if ( ! self::init_filesystem() ) {
+            return;
+        }
+
+        $meta_path = self::get_cache_meta_path();
+        $meta = [];
+
+        if ( $wp_filesystem->exists( $meta_path ) ) {
+            $meta_content = $wp_filesystem->get_contents( $meta_path );
+            if ( $meta_content !== false ) {
+                $meta = json_decode( $meta_content, true ) ?: [];
+            }
+        }
+
+        $meta['template'] = [
+            'timestamp' => time(),
+            'version'   => HTMEGA_VERSION,
+            'size'      => $size
+        ];
+
+        $wp_filesystem->put_contents( $meta_path, wp_json_encode( $meta ), FS_CHMOD_FILE );
+    }
+
+    /**
+     * Read data from cache file
+     */
+    public static function get_cache_file() {
+        global $wp_filesystem;
+
+        if ( ! self::init_filesystem() ) {
+            return null;
+        }
+
+        $file_path = self::get_cache_file_path();
+
+        if ( ! $wp_filesystem->exists( $file_path ) ) {
+            return null;
+        }
+
+        $content = $wp_filesystem->get_contents( $file_path );
+
+        if ( $content === false ) {
+            return null;
+        }
+
+        return json_decode( $content, true );
+    }
+
+    /**
+     * Check if cache is valid (not expired)
+     */
+    public static function is_cache_valid() {
+        global $wp_filesystem;
+
+        if ( ! self::init_filesystem() ) {
+            return false;
+        }
+
+        $file_path = self::get_cache_file_path();
+
+        if ( ! $wp_filesystem->exists( $file_path ) ) {
+            return false;
+        }
+
+        $meta_path = self::get_cache_meta_path();
+
+        if ( ! $wp_filesystem->exists( $meta_path ) ) {
+            // Fallback to filemtime if meta doesn't exist
+            $file_time = filemtime( $file_path );
+            return ( time() - $file_time ) < self::CACHE_EXPIRY;
+        }
+
+        $meta_content = $wp_filesystem->get_contents( $meta_path );
+        if ( $meta_content === false ) {
+            return false;
+        }
+
+        $meta = json_decode( $meta_content, true );
+
+        if ( ! isset( $meta['template']['timestamp'] ) ) {
+            // Fallback to filemtime if timestamp not in meta
+            $file_time = filemtime( $file_path );
+            return ( time() - $file_time ) < self::CACHE_EXPIRY;
+        }
+
+        return ( time() - $meta['template']['timestamp'] ) < self::CACHE_EXPIRY;
+    }
+
+    /**
+     * Clear cache files
+     */
+    public static function clear_cache() {
+        global $wp_filesystem;
+
+        if ( ! self::init_filesystem() ) {
+            return false;
+        }
+
+        $cache_dir = self::get_cache_dir();
+
+        if ( ! $wp_filesystem->is_dir( $cache_dir ) ) {
+            return true;
+        }
+
+        $file_path = self::get_cache_file_path();
+        if ( $wp_filesystem->exists( $file_path ) ) {
+            $wp_filesystem->delete( $file_path );
+        }
+        
+        // Clear meta file
+        $meta_path = self::get_cache_meta_path();
+        if ( $wp_filesystem->exists( $meta_path ) ) {
+            $wp_filesystem->delete( $meta_path );
+        }
+
+        return true;
+    }
+
     public static function request_remote_templates_info( $force_update ) {
         global $wp_version;
 
@@ -276,7 +504,12 @@ class HTMega_Template_Library{
         if ( null === $info ) {
             $info = [];
         }
-        set_transient( self::TRANSIENT_KEY, $info, 30 * DAY_IN_SECONDS );
+        
+        // Save to file cache
+        self::save_cache_file( $info );
+
+        // Clear usage of transient
+        delete_transient( self::TRANSIENT_KEY );
     }
 
     /**
@@ -284,19 +517,32 @@ class HTMega_Template_Library{
      */
     public function get_templates_info( $force_update = false ) {
         // First, check if we have cached data
-        $cached = get_transient( self::TRANSIENT_KEY );
+        $cached = null;
+        if ( self::is_cache_valid() ) {
+            $cached = self::get_cache_file();
+        }
 
         // If forcing update, always try to fetch fresh data
         if ( $force_update ) {
             self::set_templates_info( true );
-            $cached = get_transient( self::TRANSIENT_KEY );
+            $cached = self::get_cache_file();
         }
         // If no cache exists and not in backoff period, try to fetch
-        elseif ( false === $cached ) {
+        elseif ( empty( $cached ) ) {
             // Check if we're in a backoff period before making request
             if ( ! get_transient('htmega_api_backoff') ) {
                 self::set_templates_info( false );
-                $cached = get_transient( self::TRANSIENT_KEY );
+                $cached = self::get_cache_file();
+            }
+        }
+        
+        // Backward compatibility migration: If no file cache, check transient
+        if ( empty($cached) ) {
+            $transient_data = get_transient( self::TRANSIENT_KEY );
+            if ( ! empty($transient_data) ) {
+                $cached = $transient_data;
+                self::save_cache_file( $cached );
+                delete_transient( self::TRANSIENT_KEY );
             }
         }
 

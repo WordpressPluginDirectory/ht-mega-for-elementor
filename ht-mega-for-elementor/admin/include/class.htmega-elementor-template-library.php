@@ -71,7 +71,7 @@ class Elementor_Library_Manage{
                 if ( $stror_time ){
                     if( time() > $stror_time + 86400 ){
                         update_option( 'htmega_api_last_req', time() );
-                        delete_transient('htmega_template_info');
+                        \HTMega_Template_Library::clear_cache();
                         delete_transient('htmega_api_backoff');
                         delete_transient('htmega_template_request_pending');
                         delete_transient('htmega_severdown_request_pending');
@@ -79,7 +79,7 @@ class Elementor_Library_Manage{
 
                 } else {
                     update_option( 'htmega_api_last_req', time() );
-                    delete_transient('htmega_template_info');
+                    \HTMega_Template_Library::clear_cache();
                     delete_transient('htmega_api_backoff');
                     delete_transient('htmega_template_request_pending');
                     delete_transient('htmega_severdown_request_pending');       
@@ -87,13 +87,7 @@ class Elementor_Library_Manage{
                
             }
           
-            $transient = get_transient( 'htmega_template_info' );
-
-            if ( $transient ){
-                $result = $transient;
-            }else{
-                $result = \HTMega_Template_Library::instance()->get_templates_info();
-            }
+            $result = \HTMega_Template_Library::instance()->get_templates_info();
             return $result;
         } );
 
